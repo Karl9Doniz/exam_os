@@ -1,24 +1,17 @@
 cmake_minimum_required(VERSION 3.10)
-project(MyMPI VERSION 1.0)
+project(MyMPIFramework)
 
 set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-# Main library
-add_library(mympi_lib
+# Add source files
+add_executable(my_mpi_program
+    src/main.cpp
     src/mympi.cpp
-)
-target_include_directories(mympi_lib
-    PUBLIC ${PROJECT_SOURCE_DIR}/include
+    src/mympi.h
 )
 
-add_executable(launcher
-    src/launcher.cpp
-)
+# Include directories
+target_include_directories(my_mpi_program PRIVATE ${CMAKE_SOURCE_DIR}/src)
 
-add_executable(simple_test
-    examples/simple_test.cpp
-)
-target_link_libraries(simple_test
-    PRIVATE mympi_lib
-)
+# Link libraries if needed
+target_link_libraries(my_mpi_program pthread)

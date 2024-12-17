@@ -1,44 +1,67 @@
-<mark>Template for your README. Remove all unused parts and instructions</mark>
-
-# Lab work <mark>NUMBER</mark>: <mark>SHORT TOPIC</mark>
-Authors (team): <mark>AUTHORS WITH GITHUB LINKS</mark><br>
-Variant: <mark>VARIANT SHOULD BE HERE</mark>
+# Exam
+Authors (team): Andrii Ahitoliev
+Variant: Framework
 ## Prerequisites
 
-<mark>LIST LIBRARIES/TOOLS/OTHER UTILITIES THAT NEED TO BE INSTALLED (E.G. GCC, OPENMP, CMAKE ETC)</mark>
+Linux, G++ compiler
 
 ### Compilation
 
-<mark>HOW TO COMPILE YOUR PROGRAM? (RECOMMENDED: ./compile.sh)</mark>
+Standard with cmake:
 
-### Installation
-
-<mark>DESCRIBE THE INSTALLATION PROCESS (USE ./dependencies FOLDER)</mark>
-
-<mark>Note: For Python scripts, You must add `requirements.txt` 
-file and add your env to the `.gitignore` file!</mark>
+```bash
+mkdir build && cd build
+cmake ..
+make
+```
 
 ### Usage
 
-<mark>PROVIDE AN EXAMPLE OF HOW TO RUN YOUR PROGRAM (IT CAN BE A_flag COMMAND LINE WITH INPUT AND EXPECTED OUTPUT)</mark>
+build directory will contain executables of the 'producer-consumer' program and 'cicle' program.
 
-<mark>Note: if your project needs or generates any data, media and so on -- put them
-into the data folder</mark> 
+root directory has launch script - ```launch.py```. To execute, run:
 
-### Important!
+```bash
+python3 launcher.py 0 2 ./build/circle 
+```
 
-<mark>WHAT ELSE SHOULD WE KNOW ABOUT YOUR WORK? (E.G. KNOWN ISSUES, BUGS, SPECIAL BEHAVIOR ETC)</mark>
+This will run the circle communication program with shared memory option and 2 processes. Example output:
+
+<img src="5409103532688271703.jpg">
+
+There is **no** support for integration, however.
 
 ### Results
 
-<mark>DESCRIBE THE RESULTS OF THE WORK YOU DID. WHAT DID YOU LEARN OR FIND INTERESTING?</mark>
+Here i will provide short description of the API (the mympi.cpp and mympi.h files):
 
-# Additional tasks
-<mark>IF APPLICABLE, LIST ALL THE EXTRA FEATURES YOU ADDED. PROVIDE DETAILS<mark>
+**Classes**
 
-# ATTENTION!
-  
-Additional tasks not listed in the previous paragraph would not be graded.
+**MyMPI**
 
-Be sure to provide a complete list of authors.
+The core class that handles communication setup, message passing, and synchronization.
 
+Constructor: MyMPI(int argc, char** argv)
+Destructor: ~MyMPI()
+
+Description: Cleans up resources, detaching shared memory or closing socket connections.
+
+**int get_world_size() const**
+
+Returns: The number of processes in the MPI world (size of the communicator).
+
+**int get_rank() const**
+
+Returns: The rank of the current process in the communicator.
+
+***void send(int dest, const void* data, size_t size)***
+
+Description: Sends data to a specified destination process using either shared memory or socket-based communication.
+
+**void receive(int source, void* buffer, size_t size)**
+
+Description: Receives data from a specified source process using either shared memory or socket-based communication.
+
+**void barrier()**
+
+Description: Implements a barrier synchronization, where all processes wait until every process has reached the barrier. It uses shared memory or socket-based communication depending on the configuration.

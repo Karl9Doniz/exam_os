@@ -1,9 +1,21 @@
 #pragma once
 
 #include <string>
+#include <queue>
+#include <future>
+#include <optional>
 
 const int MAX_PROCESSES = 32;
 const int MAX_MESSAGE_SIZE = 1024;
+
+struct Request {
+    int source;
+    int dest;
+    void* buffer;
+    size_t size;
+    bool completed;
+    std::promise<void> promise;
+};
 
 struct SharedMemorySegment {
     int shmid;
@@ -34,6 +46,11 @@ private:
     void setup_client(const std::string& server_ip, int port);
     void setup_shared_memory(const std::string& segment_name);
 
+    Request* asend(int dest, const void* data, size_t size);
+    Request* arecv(int source, void* buffer, size_t size);
+    void wait(Request* request);
+    bool test(Request* request);
+
 public:
     MyMPI(int argc, char** argv);
     ~MyMPI();
@@ -41,6 +58,11 @@ public:
     void send(int dest, const void* data, size_t size);
     void receive(int source, void* buffer, size_t size);
     void barrier();
+
+    std::queue<Request*> pending_requests;
+    std::mutex requests_mutex;
+    
+    void check_completion(Request* request);
 
     int get_world_size() const;
     int get_rank() const;

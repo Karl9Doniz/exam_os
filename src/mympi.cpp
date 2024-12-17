@@ -16,7 +16,7 @@ const int PORT = 5000;
 
 MyMPI::MyMPI(int argc, char** argv) {
     if (argc < 3) {
-        throw std::runtime_error("Usage: Proc <rank> <conf_filename>");
+        throw std::runtime_error("Usage: Proc <rank> <config>");
     }
 
     rank = std::stoi(argv[1]);

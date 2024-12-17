@@ -4,12 +4,6 @@ import subprocess
 import os
 
 def create_config_file(mode, num_processes, config_file):
-    """
-    Create a configuration file with IP addresses and ports for processes.
-    :param mode: Mode of operation (0: shared memory, 1: sockets)
-    :param num_processes: Number of processes
-    :param config_file: Path to configuration file
-    """
     with open(config_file, 'w') as f:
         f.write(f"{mode}\n")
         f.write(f"{num_processes}\n")
@@ -22,12 +16,6 @@ def create_config_file(mode, num_processes, config_file):
                 f.write(f"127.0.0.1 {5000}\n")
 
 def launch_processes(num_processes, config_file, program_path):
-    """
-    Launch processes using the provided configuration file and executable.
-    :param num_processes: Number of processes to launch
-    :param config_file: Path to config file
-    :param program_path: Path to compiled program
-    """
     processes = []
     for rank in range(num_processes):
         cmd = [program_path, str(rank), config_file]

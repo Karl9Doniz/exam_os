@@ -19,37 +19,37 @@ int main(int argc, char** argv) {
 
     const int NUM_ROUNDS = 2;
     
-    int token;
+    int data;
 
     if (rank == 0) {
-        std::cout << "Process 0: Starting circle communication" << std::endl;
+        std::cout << "Process 0: Starting circle " << std::endl;
         
         for (int round = 1; round <= NUM_ROUNDS; ++round) {
-            token = round * 100;
-            std::cout << "Process 0: Sending token " << token << " (Round " << round << ")" << std::endl;
-            mpi_manager.send(next_rank, &token, sizeof(int));
+            data = round * 100;
+            std::cout << "Process 0: Sending " << data << " (Round " << round << ")" << std::endl;
+            mpi_manager.send(next_rank, &data, sizeof(int));
 
-            mpi_manager.receive(prev_rank, &token, sizeof(int));
-            std::cout << "Process 0: Received token " << token << " back (Round " << round << ")" << std::endl;
+            mpi_manager.receive(prev_rank, &data, sizeof(int));
+            std::cout << "Process 0: Received " << data << " back (Round " << round << ")" << std::endl;
             
             std::this_thread::sleep_for(std::chrono::seconds(1));
         }
     } else {
         for (int round = 1; round <= NUM_ROUNDS; ++round) {
-            mpi_manager.receive(prev_rank, &token, sizeof(int));
-            std::cout << "Process " << rank << ": Received token " << token 
+            mpi_manager.receive(prev_rank, &data, sizeof(int));
+            std::cout << "Process " << rank << ": Received " << data 
                       << " from Process " << prev_rank << " (Round " << round << ")" << std::endl;
 
-            token += rank;
+            data += rank;
 
-            std::cout << "Process " << rank << ": Forwarding token " << token 
+            std::cout << "Process " << rank << ": Forwarding " << data 
                       << " to Process " << next_rank << " (Round " << round << ")" << std::endl;
-            mpi_manager.send(next_rank, &token, sizeof(int));
+            mpi_manager.send(next_rank, &data, sizeof(int));
         }
     }
 
     mpi_manager.barrier();
-    std::cout << "Process " << rank << ": Finished circle communication" << std::endl;
+    std::cout << "Process " << rank << ": Finished circle " << std::endl;
 
     return 0;
 }

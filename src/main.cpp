@@ -19,18 +19,15 @@ int main(int argc, char** argv) {
     int buffer = -1;
 
     if (rank == PRODUCER_RANK) {
-        // Producer process
         for (int i = 1; i <= 5; ++i) {
             buffer = i * 10;
             std::cout << "[Producer] Produced: " << buffer << std::endl;
-            // Send to all consumers
             for (int dest = 1; dest < world_size; dest++) {
                 mpi_manager.send(dest, &buffer, sizeof(int));
             }
             std::this_thread::sleep_for(std::chrono::seconds(1));
         }
     } else {
-        // Consumer processes
         for (int i = 0; i < 5; ++i) {
             mpi_manager.receive(0, &buffer, sizeof(int));
             std::cout << "[Consumer " << rank << "] Received: " << buffer << std::endl;

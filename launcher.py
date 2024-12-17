@@ -13,9 +13,13 @@ def create_config_file(mode, num_processes, config_file):
     with open(config_file, 'w') as f:
         f.write(f"{mode}\n")
         f.write(f"{num_processes}\n")
-        for i in range(num_processes):
-            port = 5000 + i
-            f.write(f"127.0.0.1 {port}\n")
+        if mode == 0:
+            shm_path = "/tmp/mympi_shm_key"
+            open(shm_path, 'w').close()
+            f.write(f"{shm_path}\n")
+        else:
+            for i in range(num_processes):
+                f.write(f"127.0.0.1 {5000}\n")
 
 def launch_processes(num_processes, config_file, program_path):
     """
@@ -31,7 +35,6 @@ def launch_processes(num_processes, config_file, program_path):
         proc = subprocess.Popen(cmd)
         processes.append(proc)
 
-    # Wait for all processes to finish
     for proc in processes:
         proc.wait()
 
@@ -40,16 +43,13 @@ if __name__ == "__main__":
         print("Usage: launcher.py <shared_memory: 0 | sockets: 1> <num_processes> <program_path>")
         sys.exit(1)
 
-    # Parse arguments
     mode = int(sys.argv[1])
     num_processes = int(sys.argv[2])
     program_path = sys.argv[3]
     config_file = "config.txt"
 
-    # Create the configuration file
     create_config_file(mode, num_processes, config_file)
     print(f"Configuration file '{config_file}' created.")
 
-    # Launch the processes
     launch_processes(num_processes, config_file, program_path)
     print("All processes have finished.")
